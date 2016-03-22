@@ -15,7 +15,7 @@ Info sources from:
 
 Tutorial made by [Delton Ding](mailto:dsh0416@gmail.com)
 
-Last Update 15 March, 2016
+Last Update 16 March, 2016
 
 ## Install Package Dependences
 
@@ -28,14 +28,42 @@ In order to build from source code, you also need to Install the XCode Command L
 3. `brew install python`
 4. `brew install boost --with-python`
 5. `brew install boost-python`
+6. `brew install pkg-config`
+7. `brew install assimp`
+8. `brew install --universal gettext`
+
+The `gettext` include the `libintl.h` and `libintl.a` we need. But it is not automatically linked to the include and the bin. Use `brew link gettext --force` to include files forcely.
+
+We still need to modify the `CMakeList.txt` to link the library of `gettext` , change Line 236 to `set(OPENRAVE_LINK_DIRS "/usr/local/opt/gettext/lib/")`
 
 ## Install Customized Version of COLLADA-DOM
 
 The Openrave use a customized version of COLLADA-DOM, so that the official binary version for OS X may not fit properly. You'd better build the forked version to ensure the compatibility with Openrave.
 
 1. `git clone https://github.com/rdiankov/collada-dom.git`
-2. `mkdir -p build`
-3. `cmake ..`
-4. `make`
-5. `make install`
+2. `cd collada-dom`
+3. `mkdir build`
+4. `cd build`
+5. `cmake ..`
+6. `make`
+7. `make install`
 
+## Remove crlibm
+
+Since the crlibm built by clang++ cannot be correctly linked to the libopenrave itself, but the library is optional. We should forcely remove it by hand.
+
+Edit the `CMakeLists.txt` in the root directory. Add `set(CRLIBM_FOUND 0)` at line 469, which means that whatever the crlibm is compiled or not, we ignore it.
+
+## Install Openrave
+
+Get latest source code:
+
+`git clone https://github.com/rdiankov/openrave.git`
+
+Build and Install Openrave:
+
+1. `cd openrave`
+2. `mkdir build`
+3. `cd build`
+4. `ccmake ..` [c]onfigure [g]enerate
+5. ​
